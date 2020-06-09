@@ -1,0 +1,122 @@
+CREATE TABLE dim_orders_date(
+order_id varchar(100),
+order_purchase_timestamp varchar(100),
+order_approved_at varchar(100),
+order_delivered_carrier_date varchar(100),
+order_delivered_customer_date varchar(100),
+order_estimated_delivery_date varchar(100),
+shipping_limit_date varchar(100));
+
+COPY dim_orders_date FROM 's3://bucket-olist-pinage/olist_dim_order_date_dataset/part-00000-tid-6786869114849717915-caf972c6-dc86-4d97-bc9b-8d109e872a61-1890-1-c000.csv'
+iam_role 'arn:aws:iam::784456010652:role/OlistRedshiftRole'
+delimiter '|'
+REMOVEQUOTES
+region 'us-east-2';
+
+++++++++++++++++++++++++++++++++++++++++++++++
+
+CREATE TABLE dim_customers(
+customer_id varchar(100),
+customer_unique_id varchar(100));
+
+COPY dim_customers FROM 's3://bucket-olist-pinage/olist_dim_customers_dataset/part-00000-tid-6112234361779465660-9ed61535-101a-4ab2-baeb-d121eba1051d-1879-1-c000.csv'
+iam_role 'arn:aws:iam::784456010652:role/OlistRedshiftRole'
+delimiter '|'
+REMOVEQUOTES
+region 'us-east-2';
+
++++++++++++++++++++++++++++++++++++++++++++++++
+
+CREATE TABLE dim_geolocation(
+geolocation_zip_code_prefix varchar(100),
+geolocation_lat varchar(100),
+geolocation_lng varchar(100),
+geolocation_city varchar(100),
+geolocation_state varchar(100));
+
+COPY dim_geolocation FROM 's3://bucket-olist-pinage/olist_dim_geolocation_dataset/part-00000-tid-4769166828490209358-6f5d6d3f-b321-4a58-8789-4b6f4c208fef-2008-1-c000.csv'
+iam_role 'arn:aws:iam::784456010652:role/OlistRedshiftRole'
+delimiter '|'
+ignoreheader 1
+REMOVEQUOTES
+region 'us-east-2';
+
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+CREATE TABLE dim_products (
+product_id varchar(100),
+product_category_name varchar(100),
+product_name_lenght varchar(100),
+product_description_lenght varchar(100),
+product_photos_qty varchar(100),
+product_weight_g varchar(100),
+product_length_cm varchar(100),
+product_height_cm varchar(100),
+product_width_cm varchar(100));
+
+COPY dim_products FROM 's3://bucket-olist-pinage/olist_dim_products_dataset/part-00000-tid-13156548635186991-37685398-2ca1-464b-b2b6-f4b4eed32376-1999-1-c000.csv'
+iam_role 'arn:aws:iam::784456010652:role/OlistRedshiftRole'
+delimiter '|'
+ignoreheader 1
+REMOVEQUOTES
+region 'us-east-2';
+
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+CREATE TABLE fact_item_sales (
+seller_id varchar(100),
+order_id varchar(100),
+order_item_id varchar(100),
+product_id varchar(100),
+price varchar(100),
+freight_value varchar(100),
+customer_id varchar(100),
+customer_zip_code_prefix varchar(100),
+order_status varchar(100),
+seller_zip_code_prefix varchar(100));
+
+COPY fact_item_sales FROM 's3://bucket-olist-pinage/olist_fact_item_sales_dataset/part-00000-tid-8637889218161992408-5b885ece-55c0-4f7c-a598-4afc5c0a87c0-90-1-c000.csv'
+iam_role 'arn:aws:iam::784456010652:role/OlistRedshiftRole'
+delimiter '|'
+ignoreheader 1
+REMOVEQUOTES
+region 'us-east-2';
+
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+CREATE TABLE fact_order_payments (
+order_id varchar(100),
+payment_sequential varchar(100),
+payment_type varchar(100),
+payment_installments varchar(100),
+payment_value varchar(100),
+customer_id varchar(100));
+
+COPY fact_order_payments FROM 's3://bucket-olist-pinage/olist_fact_order_payments_dataset/part-00000-tid-7355748444783662095-b70a0797-1764-4d42-9b72-8f9a0edc308a-1992-1-c000.csv'
+iam_role 'arn:aws:iam::784456010652:role/OlistRedshiftRole'
+delimiter '|'
+ignoreheader 1
+REMOVEQUOTES
+region 'us-east-2';
+
++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+CREATE TABLE fact_order_revies (
+order_id varchar(100),
+review_id varchar(100),
+review_score varchar(100),
+review_comment_title varchar(100),
+review_comment_message varchar(1000),
+review_creation_date varchar(100),
+review_answer_timestamp varchar(100),
+customer_id varchar(100));
+
+COPY fact_order_reviews FROM 's3://bucket-olist-pinage/olist_fact_order_reviews_dataset/part-00000-tid-7355748444783662095-b70a0797-1764-4d42-9b72-8f9a0edc308a-1992-1-c000.csv'
+iam_role 'arn:aws:iam::784456010652:role/OlistRedshiftRole'
+delimiter '|'
+ignoreheader 1
+REMOVEQUOTES
+region 'us-east-2';
+
++++++++++++++++++++++++++++++++++++++++++++++++++++
+SELECT * FROM STL_LOAD_ERRORS order by starttime desc

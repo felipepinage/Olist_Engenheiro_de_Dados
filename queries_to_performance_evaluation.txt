@@ -1,0 +1,35 @@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+select ord.customer_id,
+sum(it.price) as total_price,
+sum(it.freight_value) as total_freight
+from olist_item as it
+left join olist_orders as ord
+on (ord.order_id = it.order_id)
+group by ord.customer_id
+order by total_price, ord.customer_id
+
+++++++++++++++++++++++++++++++++++++++
+
+select customer_id,
+sum(price) as total_price,
+sum(freight_value) as total_freight
+from fact_item_sales
+group by customer_id
+order by total_price, customer_id
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+select pay.payment_type,
+count(ord.customer_id)
+from olist_orders as ord
+left join olist_order_payments as pay
+using (order_id)
+group by payment_type
+
++++++++++++++++++++++++++++++++++++++++++++++
+
+select payment_type,
+count(customer_id),
+from fact_order_payments as fop
+group by payment_type
